@@ -71,10 +71,10 @@ if __name__ == "__main__":
         args.period,
         args.method,
         args.dns,
-        args.ct,
         args.httpproxy,
         args.httpsproxy,
-        args.verifyssl
+        args.verifyssl,
+        args.ct
     )
 
     if args.subdomains or args.vt or args.subdomains or args.phishing \
