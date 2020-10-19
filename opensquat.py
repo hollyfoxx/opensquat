@@ -74,7 +74,7 @@ if __name__ == "__main__":
         args.ct,
         args.httpproxy,
         args.httpsproxy,
-        args.v
+        args.verifyssl
     )
 
     if args.subdomains or args.vt or args.subdomains or args.phishing \
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         time.sleep(1)
         for domain in file_content:
             print("[*]", domain)
-            subdomains = vt.VirusTotal().main(domain, "subdomains", args.httpproxy, args.httpsproxy, args.v)
+            subdomains = vt.VirusTotal().main(domain, "subdomains", args.httpproxy, args.httpsproxy, args.verifyssl)
 
             if subdomains:
                 for subdomain in subdomains:
@@ -107,7 +107,7 @@ if __name__ == "__main__":
         print("\n+---------- VirusTotal ----------+")
         time.sleep(1)
         for domain in file_content:
-            malicious = vt.VirusTotal().main(domain, "malicious", args.httpproxy, args.httpsproxy, args.v)
+            malicious = vt.VirusTotal().main(domain, "malicious", args.httpproxy, args.httpsproxy, args.verifyssl)
 
             if malicious > 0:
                 print(
@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
     # Check for phishing
     if (args.phishing != ""):
-        file_phishing = phishing.Phishing().main(args.keywords, args.httpproxy, args.httpsproxy, args.v)
+        file_phishing = phishing.Phishing().main(args.keywords, args.httpproxy, args.httpsproxy, args.verifyssl)
         output.SaveFile().main(args.phishing, "txt", file_phishing)
 
     # Check if domain has webserver port opened
@@ -170,4 +170,4 @@ if __name__ == "__main__":
     print("[*] Running time: %s seconds" % end_time_squatting)
     print("")
 
-    check_update.CheckUpdate().main(args.httpproxy, args.httpsproxy, args.v)
+    check_update.CheckUpdate().main(args.httpproxy, args.httpsproxy, args.verifyssl)
