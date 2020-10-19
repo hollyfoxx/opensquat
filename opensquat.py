@@ -77,8 +77,7 @@ if __name__ == "__main__":
         args.ct
     )
 
-    if args.subdomains or args.vt or args.subdomains or args.phishing \
-        or args.portscheck:
+    if args.subdomains or args.vt or args.subdomains or args.phishing or args.portcheck:
         print("\n[*] Total found:", len(file_content))
 
     # Check for subdomains
