@@ -174,6 +174,28 @@ def get_args():
         help="validate against VirusTotal",
     )
 
+    parser.add_argument(
+        "--httpproxy",
+        type=str,
+        default=None,
+        help="http proxy to use when making requests",
+    )
+
+    parser.add_argument(
+        "--httpsproxy",
+        type=str,
+        default=None,
+        help="https proxy to use when making requests",
+    )
+
+    parser.add_argument(
+        "-v",
+        "--verifyssl",
+        type=bool,
+        default=True,
+        help="whether to verifiy SSL when making requests",
+    )
+
     args = parser.parse_args()
 
     return args

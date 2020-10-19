@@ -24,6 +24,9 @@ class VirusTotal:
         self.content = ""
         self.op = ""
 
+        self.proxies = {}
+        self.verify_ssl = True
+
     def set_domain(self, domain):
         self.domain = domain
 
@@ -46,7 +49,7 @@ class VirusTotal:
         }
 
         # Get response content
-        response = requests.get(self.URL, stream=True, headers=headers)
+        response = requests.get(self.URL, stream=True, headers=headers, proxies=self.proxies, verify=self.verify_ssl)
         content = json.loads(response.content)
 
         self.content = content
@@ -84,7 +87,12 @@ class VirusTotal:
 
         return malicious
 
-    def main(self, domain, op):
+    def main(self, domain, op, http_proxy, https_proxy, verify_ssl):
+        if http_proxy:
+            self.proxies.update({'HTTP_PROXY': http_proxy})
+        if https_proxy:
+            self.proxies.update({'HTTPS_PROXY': https_proxy})
+        self.verify_ssl = verify_ssl
         self.set_domain(domain)
         self.set_operation(op)
         self.get_content()

@@ -34,11 +34,13 @@ class CRTSH:
     URL = "https://crt.sh/"
 
     @classmethod
-    def check_certificate(cls, domain: str) -> bool:
-        url = f"{cls.URL}?q={domain}"
+    def check_certificate(cls, domain: str, proxies=None, verify=True) -> bool:
+        if proxies is None:
+            proxies = {}
 
+        url = f"{cls.URL}?q={domain}"
         try:
-            html_text = requests.get(url).text
+            html_text = requests.get(url, proxies=proxies, verify=verify).text
         except Exception as e:
             print("Cannot fetch data from {url}")
             return True

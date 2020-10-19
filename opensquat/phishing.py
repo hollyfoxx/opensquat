@@ -38,6 +38,9 @@ class Phishing:
         self.list_domains = []
         self.keywords_total = 0
 
+        self.proxies = {}
+        self.verify_ssl = True
+
     def set_keywords(self, keywords):
         self.keywords_filename = keywords
 
@@ -50,9 +53,9 @@ class Phishing:
 
     def count_keywords(self):
         self.keywords_total = file_input.InputFile().main(
-            self.keywords_filename,
-            None
-            )
+                self.keywords_filename,
+                None
+        )
 
     def check_phishing(self):
 
@@ -71,21 +74,21 @@ class Phishing:
                 continue
 
             if (
-                (keyword[0] != "#") and
-                (keyword[0] != " ") and
-                (keyword[0] != "") and
-                (keyword[0] != "\n")
+                    (keyword[0] != "#") and
+                    (keyword[0] != " ") and
+                    (keyword[0] != "") and
+                    (keyword[0] != "\n")
             ):
                 i += 1
                 print(
-                    Fore.WHITE + "\n[*] Verifying keyword:",
-                    keyword,
-                    "[",
-                    i,
-                    "/",
-                    self.keywords_total,
-                    "]" + Style.RESET_ALL,
-                )
+                        Fore.WHITE + "\n[*] Verifying keyword:",
+                        keyword,
+                        "[",
+                        i,
+                        "/",
+                        self.keywords_total,
+                        "]" + Style.RESET_ALL,
+                        )
 
                 for site in f_phishing:
                     phishing_site = site.lower()
@@ -93,13 +96,13 @@ class Phishing:
 
                     if self.URL_contains(keyword, phishing_site):
                         print(
-                            Style.BRIGHT + Fore.YELLOW +
-                            "  \_ Similarity detected between",
-                            keyword,
-                            "and",
-                            phishing_site,
-                            "" + Style.RESET_ALL
-                            )
+                                Style.BRIGHT + Fore.YELLOW +
+                                "  \_ Similarity detected between",
+                                keyword,
+                                "and",
+                                phishing_site,
+                                "" + Style.RESET_ALL
+                        )
                         self.list_domains.append(phishing_site)
 
         return self.list_domains
@@ -108,11 +111,11 @@ class Phishing:
 
         try:
             print(
-                "[*] Downloading fresh Phishing DB from",
-                self.phishing_db
-                )
+                    "[*] Downloading fresh Phishing DB from",
+                    self.phishing_db
+            )
             session = requests.session()
-            r = session.get(self.phishing_db, stream=True)
+            r = session.get(self.phishing_db, stream=True, proxies=self.proxies, verify=self.verify_ssl)
 
             # Get total file size in bytes from the request header
             total_size = int(r.headers.get("content-length", 0))
@@ -122,9 +125,9 @@ class Phishing:
             if total_size_mb == 0:
 
                 print(
-                    "[ERROR] File not found or empty! Contact the authors " +
-                    "or try again later. Exiting...\n",
-                )
+                        "[ERROR] File not found or empty! Contact the authors " +
+                        "or try again later. Exiting...\n",
+                        )
                 exit(-1)
 
             print("[*] Download volume:", total_size_mb, "MB")
@@ -143,7 +146,7 @@ class Phishing:
 
         return True
 
-    def main(self, keywords):
+    def main(self, keywords, http_proxy, https_proxy, verify_ssl):
         """
         main function that will call other functions.
 
@@ -153,6 +156,12 @@ class Phishing:
         Return:
             none
         """
+        if http_proxy:
+            self.proxies.update({'HTTP_PROXY': http_proxy})
+        if https_proxy:
+            self.proxies.update({'HTTPS_PROXY': https_proxy})
+        self.verify_ssl = verify_ssl
+
         print("")
         print("+---------- Checking Phishing sites ----------+")
         time.sleep(2)

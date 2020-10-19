@@ -31,6 +31,8 @@ class CheckUpdate:
         """Initiator."""
         self.URL = ("https://feeds.opensquat.com/latest.txt")
         self.current = __VERSION__
+        self.proxies = {}
+        self.verify_ssl = True
 
     def check(self):
 
@@ -39,7 +41,7 @@ class CheckUpdate:
         headers = {'User-Agent': ver}
 
         try:
-            response = requests.get(self.URL, headers=headers)
+            response = requests.get(self.URL, headers=headers, proxies=self.proxies, verify=self.verify_ssl)
         except requests.exceptions.RequestException:
             return False
 
@@ -73,5 +75,10 @@ class CheckUpdate:
 
         return True
 
-    def main(self):
+    def main(self, http_proxy, https_proxy, verify_ssl):
+        if http_proxy:
+            self.proxies.update({'HTTP_PROXY': http_proxy})
+        if https_proxy:
+            self.proxies.update({'HTTPS_PROXY': https_proxy})
+        self.verify_ssl = verify_ssl
         self.check()

@@ -48,8 +48,8 @@ class Domain:
         """Initiator."""
         self.URL = ("https://feeds.opensquat.com/")
         self.URL_backup = (
-            "https://raw.githubusercontent.com/CERT-MZ/projects"
-            "/master/Domain-squatting/"
+                "https://raw.githubusercontent.com/CERT-MZ/projects"
+                "/master/Domain-squatting/"
         )
         self.URL_file = None
         self.today = date.today().strftime("%Y-%m-%d")
@@ -67,28 +67,31 @@ class Domain:
         self.list_file_keywords = []
 
         self.confidence = {
-            0: "very high confidence",
-            1: "high confidence",
-            2: "medium confidence",
-            3: "low confidence",
-            4: "very low confidence",
+                0: "very high confidence",
+                1: "high confidence",
+                2: "medium confidence",
+                3: "low confidence",
+                4: "very low confidence",
         }
 
         self.jaro_winkler = {
-            0.8: "Low",
-            0.89: "Medium",
-            0.949: "High",
-            0.95: "Very high",
+                0.8: "Low",
+                0.89: "Medium",
+                0.949: "High",
+                0.95: "Very high",
         }
 
         self.method = "Levenshtein"
 
+        self.proxies = {}
+        self.verify_ssl = True
+
     def count_files(self):
 
         (self.keywords_total, self.domain_total) = file_input.InputFile().main(
-            self.keywords_filename,
-            self.domain_filename
-            )
+                self.keywords_filename,
+                self.domain_filename
+        )
 
     @staticmethod
     def domain_contains(keyword, domain):
@@ -117,10 +120,10 @@ class Domain:
 
         for line in file_keywords:
             if (
-                (line[0] != "#") and
-                (line[0] != " ") and
-                (line[0] != "") and
-                (line[0] != "\n")
+                    (line[0] != "#") and
+                    (line[0] != " ") and
+                    (line[0] != "") and
+                    (line[0] != "\n")
             ):
                 self.list_file_keywords.append(line)
 
@@ -135,7 +138,7 @@ class Domain:
         headers = {'User-Agent': ver}
 
         try:
-            response = requests.get(URL, headers=headers)
+            response = requests.get(URL, headers=headers, proxies=self.proxies, verify=self.verify_ssl)
         except requests.exceptions.RequestException:
             return False
 
@@ -183,17 +186,17 @@ class Domain:
         # User-Agent
         ver = "openSquat-" + __VERSION__
         headers = {'User-Agent': ver}
-        response = requests.get(URL, stream=True, headers=headers)
+        response = requests.get(URL, stream=True, headers=headers, proxies=self.proxies, verify=self.verify_ssl)
 
         # fault tolerance in case the "domain-names.txt is not found"
         if (response.status_code == 403 or response.status_code == 404):
             print(
-                Style.BRIGHT+Fore.RED+"[ERROR]", self.URL_file, "not found," +
-                "trying the backup URL."+Style.RESET_ALL
-                )
+                    Style.BRIGHT+Fore.RED+"[ERROR]", self.URL_file, "not found," +
+                    "trying the backup URL."+Style.RESET_ALL
+            )
             URL = self.URL_backup + self.URL_file
             print("[*] Downloading fresh domain list from backup URL", URL)
-            response = requests.get(URL, stream=True, headers=headers)
+            response = requests.get(URL, stream=True, headers=headers, proxies=self.proxies, verify=self.verify_ssl)
 
         # Get total file size in bytes from the request header
         total_size = int(response.headers.get("content-length", 0))
@@ -203,9 +206,9 @@ class Domain:
         if total_size_mb == 0:
 
             print(
-                Style.BRIGHT+Fore.RED+"[ERROR]", self.URL_file, "not found, " +
-                "Please notify the authors or try again later."+Style.RESET_ALL
-                )
+                    Style.BRIGHT+Fore.RED+"[ERROR]", self.URL_file, "not found, " +
+                    "Please notify the authors or try again later."+Style.RESET_ALL
+            )
             exit(-1)
 
         print("[*] Download volume:", total_size_mb, "MB")
@@ -325,21 +328,21 @@ class Domain:
                 continue
 
             if (
-                (keyword[0] != "#") and
-                (keyword[0] != " ") and
-                (keyword[0] != "") and
-                (keyword[0] != "\n")
+                    (keyword[0] != "#") and
+                    (keyword[0] != " ") and
+                    (keyword[0] != "") and
+                    (keyword[0] != "\n")
             ):
                 i += 1
                 print(
-                    Fore.WHITE + "\n[*] Verifying keyword:",
-                    keyword,
-                    "[",
-                    i,
-                    "/",
-                    self.keywords_total,
-                    "]" + Style.RESET_ALL,
-                )
+                        Fore.WHITE + "\n[*] Verifying keyword:",
+                        keyword,
+                        "[",
+                        i,
+                        "/",
+                        self.keywords_total,
+                        "]" + Style.RESET_ALL,
+                        )
 
                 for domains in self.list_file_domains:
                     domain = domains.split(".")
@@ -362,27 +365,27 @@ class Domain:
 
                     if self.doppelganger_only:
                         self._process_doppelgagner_only(
-                            keyword,
-                            domain,
-                            domains
-                            )
+                                keyword,
+                                domain,
+                                domains
+                        )
                         continue
 
                     if self.method.lower() == "levenshtein":
                         self._process_levenshtein(
-                            keyword, domain, homograph_domain, domains
+                                keyword, domain, homograph_domain, domains
                         )
                     elif self.method.lower() == "jarowinkler":
                         self._process_jarowinkler(
-                            keyword, domain, homograph_domain, domains
+                                keyword, domain, homograph_domain, domains
                         )
                     else:
                         print(
-                            f"No such method: {self.method}. "
-                            "Levenshtein will be used as default."
+                                f"No such method: {self.method}. "
+                                "Levenshtein will be used as default."
                         )
                         self._process_levenshtein(
-                            keyword, domain, homograph_domain, domains
+                                keyword, domain, homograph_domain, domains
                         )
                     j += 1
 
@@ -391,17 +394,17 @@ class Domain:
     def _process_doppelgagner_only(self, keyword, domain, domains):
         def print_info(_info):
             print(
-                Style.BRIGHT + Fore.RED + f"[+] {_info} between",
-                keyword,
-                "and",
-                domains,
-                "" + Style.RESET_ALL,
-            )
+                    Style.BRIGHT + Fore.RED + f"[+] {_info} between",
+                    keyword,
+                    "and",
+                    domains,
+                    "" + Style.RESET_ALL,
+                    )
 
         doppelganger = self.domain_contains(keyword, domain)
 
         if doppelganger:
-            if not ct.CRTSH.check_certificate(domains):
+            if not ct.CRTSH.check_certificate(domains, self.proxies, self.verify_ssl):
                 print_info("suspicious certificate detected")
             else:
                 print_info("suspicious certificate detected")
@@ -412,10 +415,10 @@ class Domain:
 
         if (leven_dist <= self.confidence_level) and not homograph_domain:
             self.on_similarity_detected(
-                keyword,
-                domains,
-                self.confidence[leven_dist]
-                )
+                    keyword,
+                    domains,
+                    self.confidence[leven_dist]
+            )
 
             #  DNS Validation
             if(self.dns_validation):
@@ -423,10 +426,10 @@ class Domain:
 
         elif (leven_dist <= self.confidence_level) and homograph_domain:
             self.on_homograph_detected(
-                keyword,
-                domains,
-                self.confidence[leven_dist]
-                )
+                    keyword,
+                    domains,
+                    self.confidence[leven_dist]
+            )
             self.dns_reputation(domains)
 
             #  DNS Validation
@@ -443,52 +446,52 @@ class Domain:
     @staticmethod
     def dns_error_NoAnswer():
         print(
-            Fore.YELLOW + "  \_ DNS Server error: No Answer\n" +
-            Style.RESET_ALL,
-        )
+                Fore.YELLOW + "  \_ DNS Server error: No Answer\n" +
+                Style.RESET_ALL,
+                )
 
     @staticmethod
     def dns_error_NoNameservers():
         print(
-            Fore.YELLOW + "  \_ DNS Server error: No Name Servers (SRVFAIL)" +
-            "\n" + Style.RESET_ALL,
-        )
+                Fore.YELLOW + "  \_ DNS Server error: No Name Servers (SRVFAIL)" +
+                "\n" + Style.RESET_ALL,
+                )
 
     @staticmethod
     def dns_error_timeout():
         print(
-            Fore.YELLOW + "  \_ DNS Server error: " +
-            "Possible Provider throttling\n" + Style.RESET_ALL,
-        )
+                Fore.YELLOW + "  \_ DNS Server error: " +
+                "Possible Provider throttling\n" + Style.RESET_ALL,
+                )
 
     @staticmethod
     def dns_error_nxdomain():
         print(
-            Fore.YELLOW + "  \_ DNS response: Non-Existent Domain\n" +
-            Style.RESET_ALL,
-        )
+                Fore.YELLOW + "  \_ DNS response: Non-Existent Domain\n" +
+                Style.RESET_ALL,
+                )
 
     @staticmethod
     def dns_error(dns_resp):
         print(
-            Fore.YELLOW + "  \_ DNS response:",
-            dns_resp,
-            "\n" + Style.RESET_ALL,
-        )
+                Fore.YELLOW + "  \_ DNS response:",
+                dns_resp,
+                "\n" + Style.RESET_ALL,
+                )
 
     @staticmethod
     def dns_malicious():
         print(
-            Style.BRIGHT + Fore.RED + "  \_ Domain Reputation: Malicious\n" +
-            Style.RESET_ALL,
-        )
+                Style.BRIGHT + Fore.RED + "  \_ Domain Reputation: Malicious\n" +
+                Style.RESET_ALL,
+                )
 
     @staticmethod
     def dns_non_malicious():
         print(
-            Fore.GREEN + "  \_ Domain Reputation: Non-malicious\n" +
-            Style.RESET_ALL,
-        )
+                Fore.GREEN + "  \_ Domain Reputation: Non-malicious\n" +
+                Style.RESET_ALL,
+                )
 
     def dns_reputation(self, domain):
 
@@ -533,24 +536,24 @@ class Domain:
 
     def on_similarity_detected(self, keyword, domains, value):
         print(
-            Style.BRIGHT + Fore.RED + "[+] Similarity detected between",
-            keyword,
-            "and",
-            domains,
-            "(%s)" % value,
-            "" + Style.RESET_ALL,
-        )
+                Style.BRIGHT + Fore.RED + "[+] Similarity detected between",
+                keyword,
+                "and",
+                domains,
+                "(%s)" % value,
+                "" + Style.RESET_ALL,
+                )
         self.list_domains.append(domains)
 
     def on_homograph_detected(self, keyword, domains, value):
         print(
-            Style.BRIGHT + Fore.RED + "[+] Homograph detected between",
-            keyword,
-            "and",
-            domains,
-            "(%s)" % value,
-            "" + Style.RESET_ALL,
-        )
+                Style.BRIGHT + Fore.RED + "[+] Homograph detected between",
+                keyword,
+                "and",
+                domains,
+                "(%s)" % value,
+                "" + Style.RESET_ALL,
+                )
         self.list_domains.append(domains)
 
     def on_domain_contains(self, keyword, domains):
@@ -558,14 +561,17 @@ class Domain:
         self.list_domains.append(domains)
 
     def main(
-        self,
-        keywords_file,
-        confidence_level,
-        domains_file,
-        search_period,
-        method,
-        dns,
-        doppelganger_only=False,
+            self,
+            keywords_file,
+            confidence_level,
+            domains_file,
+            search_period,
+            method,
+            dns,
+            http_proxy,
+            https_proxy,
+            verify_ssl,
+            doppelganger_only=False,
     ):
         """
         Method to call the class functions.
@@ -584,6 +590,14 @@ class Domain:
         self.doppelganger_only = doppelganger_only
         self.set_dns_validation(dns)
         self.method = method
+
+        if https_proxy:
+            self.proxies.update({'HTTP_PROXY': http_proxy})
+
+        if https_proxy:
+            self.proxies.update({'HTTPS_PROXY': http_proxy})
+
+        self.verify_ssl = verify_ssl
 
         if self.domain_filename == "":
             self.domain_filename = self.URL_file
