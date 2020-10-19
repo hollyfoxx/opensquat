@@ -189,12 +189,12 @@ def get_args():
     )
 
     parser.add_argument(
-        "-v",
-        "--verifyssl",
-        type=bool,
-        default=True,
-        help="whether to verifiy SSL when making requests",
+        "--no-verify-ssl",
+        dest='verifyssl',
+        action='store_false',
+        help="option to not verify SSL when making requests",
     )
+    parser.set_defaults(verifyssl=True)
 
     args = parser.parse_args()
 
