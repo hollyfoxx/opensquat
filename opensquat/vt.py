@@ -92,7 +92,8 @@ class VirusTotal:
             self.proxies.update({'HTTP_PROXY': http_proxy})
         if https_proxy:
             self.proxies.update({'HTTPS_PROXY': https_proxy})
-        self.verify_ssl = verify_ssl
+        if verify_ssl:
+            self.verify_ssl = verify_ssl
         self.set_domain(domain)
         self.set_operation(op)
         self.get_content()

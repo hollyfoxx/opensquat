@@ -597,7 +597,8 @@ class Domain:
         if https_proxy:
             self.proxies.update({'HTTPS_PROXY': http_proxy})
 
-        self.verify_ssl = verify_ssl
+        if verify_ssl:
+            self.verify_ssl = verify_ssl
 
         if self.domain_filename == "":
             self.domain_filename = self.URL_file
