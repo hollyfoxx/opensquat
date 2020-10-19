@@ -592,10 +592,10 @@ class Domain:
         self.method = method
 
         if https_proxy:
-            self.proxies.update({'HTTP_PROXY': http_proxy})
+            self.proxies.update({'http': http_proxy})
 
         if https_proxy:
-            self.proxies.update({'HTTPS_PROXY': http_proxy})
+            self.proxies.update({'https': http_proxy})
 
         if verify_ssl:
             self.verify_ssl = verify_ssl

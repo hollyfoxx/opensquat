@@ -24,9 +24,6 @@ class VirusTotal:
         self.content = ""
         self.op = ""
 
-        self.proxies = {}
-        self.verify_ssl = False
-
     def set_domain(self, domain):
         self.domain = domain
 
@@ -47,6 +44,9 @@ class VirusTotal:
             "AppleWebKit/537.36 (KHTML, like Gecko)"
             "Chrome/78.0.3904.108 Safari/537.36"
         }
+
+        print(self.proxies)
+        print(self.verify_ssl)
 
         # Get response content
         response = requests.get(self.URL, stream=True, headers=headers, proxies=self.proxies, verify=self.verify_ssl)
@@ -89,9 +89,9 @@ class VirusTotal:
 
     def main(self, domain, op, http_proxy, https_proxy, verify_ssl):
         if http_proxy:
-            self.proxies.update({'HTTP_PROXY': http_proxy})
+            self.proxies.update({'http': http_proxy})
         if https_proxy:
-            self.proxies.update({'HTTPS_PROXY': https_proxy})
+            self.proxies.update({'https': https_proxy})
         if verify_ssl:
             self.verify_ssl = verify_ssl
         self.set_domain(domain)

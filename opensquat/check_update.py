@@ -77,9 +77,9 @@ class CheckUpdate:
 
     def main(self, http_proxy, https_proxy, verify_ssl):
         if http_proxy:
-            self.proxies.update({'HTTP_PROXY': http_proxy})
+            self.proxies.update({'http': http_proxy})
         if https_proxy:
-            self.proxies.update({'HTTPS_PROXY': https_proxy})
+            self.proxies.update({'https': https_proxy})
         if verify_ssl:
             self.verify_ssl = verify_ssl
         self.check()
