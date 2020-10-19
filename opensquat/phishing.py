@@ -39,7 +39,7 @@ class Phishing:
         self.keywords_total = 0
 
         self.proxies = {}
-        self.verify_ssl = True
+        self.verify_ssl = False
 
     def set_keywords(self, keywords):
         self.keywords_filename = keywords

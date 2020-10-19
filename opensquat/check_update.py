@@ -32,7 +32,7 @@ class CheckUpdate:
         self.URL = ("https://feeds.opensquat.com/latest.txt")
         self.current = __VERSION__
         self.proxies = {}
-        self.verify_ssl = True
+        self.verify_ssl = False
 
     def check(self):
 

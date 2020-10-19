@@ -84,7 +84,7 @@ class Domain:
         self.method = "Levenshtein"
 
         self.proxies = {}
-        self.verify_ssl = True
+        self.verify_ssl = False
 
     def count_files(self):
 

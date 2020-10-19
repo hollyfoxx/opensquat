@@ -25,7 +25,7 @@ class VirusTotal:
         self.op = ""
 
         self.proxies = {}
-        self.verify_ssl = True
+        self.verify_ssl = False
 
     def set_domain(self, domain):
         self.domain = domain

@@ -34,7 +34,7 @@ class CRTSH:
     URL = "https://crt.sh/"
 
     @classmethod
-    def check_certificate(cls, domain: str, proxies=None, verify=True) -> bool:
+    def check_certificate(cls, domain: str, proxies=None, verify=False) -> bool:
         if proxies is None:
             proxies = {}
 
